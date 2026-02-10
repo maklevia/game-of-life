@@ -1,9 +1,7 @@
-//TO FIX: more than one  click on start button won't allow to stop the game
 
 
 let gridSize = 10;
 let grid = [];
-
 let playbackTimeout = null;
 
 function checkAliveConditionForCell(row, col, grid){
@@ -55,6 +53,7 @@ function iterateGridAndCheckConditionForCells(){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    let isStarted = false;
     insertGridSize()
     createGrid();
     addListenersToCells();
@@ -70,6 +69,8 @@ function listenStartButton() {
     let button = document.querySelector('#start');
     button.addEventListener('click', () => {
         clearInterval(playbackTimeout);
+        isStarted = true;
+        changeButtonIfActive();
         playbackTimeout = setInterval(() => {
             iterateGridAndCheckConditionForCells();
             clearWrapper();
@@ -83,7 +84,23 @@ function listenStopButton() {
     let button = document.querySelector('#stop');
     button.addEventListener('click', () => {
         clearInterval(playbackTimeout);
+        isStarted = false;
+        changeButtonIfActive();
     })
+}
+
+function changeButtonIfActive() {
+    let startButton = document.querySelector('#start');
+    let stopButton = document.querySelector('#stop');
+    if (!isStarted) {
+        startButton.classList.remove('active');
+        stopButton.classList.add('active');
+    }
+    else {
+        startButton.classList.add('active');
+        stopButton.classList.remove('active');
+    }
+
 }
 
 function resetCells() {
