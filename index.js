@@ -3,6 +3,7 @@
 let gridSize = 10;
 let grid = [];
 let playbackTimeout = null;
+let isStarted = false;
 
 function checkAliveConditionForCell(row, col, grid){
     let aliveNeighborsCounter = 0;
@@ -53,7 +54,6 @@ function iterateGridAndCheckConditionForCells(){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    let isStarted = false;
     insertGridSize()
     createGrid();
     addListenersToCells();
@@ -92,13 +92,19 @@ function listenStopButton() {
 function changeButtonIfActive() {
     let startButton = document.querySelector('#start');
     let stopButton = document.querySelector('#stop');
+    let startIcon = document.querySelector('#startIcon');
+    let stopIcon = document.querySelector('#stopIcon');
     if (!isStarted) {
         startButton.classList.remove('active');
         stopButton.classList.add('active');
+        startIcon.classList.remove('active-icon');
+        stopIcon.classList.add('active-icon');
     }
     else {
         startButton.classList.add('active');
         stopButton.classList.remove('active');
+        startIcon.classList.add('active-icon');
+        stopIcon.classList.remove('active-icon');
     }
 
 }
