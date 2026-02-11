@@ -1,11 +1,5 @@
-// instead of recreating actual grid(not 2d array implementation)
-// you can loop through each cell(html element) and check with array of next iteration(copy) to
-// paint cells accordingly
-// it will increace perfomance, as you not recreating html element on each iteration
 
 // also you can rework logic of randomization, increasing\decreasing grid size to not recreate actual grid each time
-
-
 
 // ability to interactivly set custom colors selector for dead\alive cells
 // copy and paste btns: copy btn allows you to copy grid(2d array on current iteration)
@@ -62,7 +56,6 @@ function iterateGridAndCheckConditionForCells(){
             copyGrid[rowIndex][colIndex] = checkAliveConditionForCell(rowIndex, colIndex, grid);
         }
     }
-
     grid = copyGrid;
 }
 
@@ -84,11 +77,24 @@ function listenStartButton() {
         clearInterval(playbackTimeout);
         isStarted = true;
         changeButtonIfActive();
+        const allCells = document.querySelectorAll('.cell');
         playbackTimeout = setInterval(() => {
             iterateGridAndCheckConditionForCells();
-            clearWrapper();
-            createGrid(0, true);
-            addListenersToCells();
+            allCells.forEach((cell) => {
+                const rowIndex = cell.id.split(' - ')[0];
+                const colIndex = cell.id.split(' - ')[1];
+                if (cell.classList.contains('alive') && !grid[rowIndex][colIndex]) {
+                    cell.classList.remove('alive');
+                    cell.classList.add('dead');
+                }
+                else if (cell.classList.contains('dead') && grid[rowIndex][colIndex]) {
+                    cell.classList.remove('dead');
+                    cell.classList.add('alive');
+                }
+            })
+            //clearWrapper();
+            //createGrid(0, true);
+            //addListenersToCells();
         }, 300)
     })
 }
@@ -119,7 +125,6 @@ function changeButtonIfActive() {
         startIcon.classList.add('active-icon');
         stopIcon.classList.remove('active-icon');
     }
-
 }
 
 function resetCells() {
