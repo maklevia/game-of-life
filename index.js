@@ -6,11 +6,24 @@
 // past btn allows you to past 2d array
 
 
+// 1) take 2d array. 2)pop from grid. iterate through array  and pop(remove last item) from each row. and.\
 
 let gridSize = 10;
 let grid = [];
 let playbackTimeout = null;
 let isStarted = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+    createGrid();
+    addListenersToAllCells();
+    increaseGridSizeByButton();
+    decreaseGridSizeByButton();
+    resetCells();
+    randomizeGrid();
+    listenStartButton();
+    listenStopButton();
+    changeSizeWithField();
+})
 
 function checkAliveConditionForCell(row, col, grid){
     let aliveNeighborsCounter = 0;
@@ -59,18 +72,6 @@ function iterateGridAndCheckConditionForCells(){
     grid = copyGrid;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    createGrid();
-    addListenersToCells();
-    increaseGridSize();
-    decreaseGridSize();
-    resetCells();
-    randomizeGrid();
-    listenStartButton();
-    listenStopButton();
-    changeSizeWithField();
-})
-
 function listenStartButton() {
     let button = document.querySelector('#start');
     button.addEventListener('click', () => {
@@ -92,9 +93,7 @@ function listenStartButton() {
                     cell.classList.add('alive');
                 }
             })
-            //clearWrapper();
-            //createGrid(0, true);
-            //addListenersToCells();
+            console.log(grid);
         }, 300)
     })
 }
@@ -130,10 +129,14 @@ function changeButtonIfActive() {
 function resetCells() {
     const resetButton = document.querySelector('#reset');
     resetButton.addEventListener('click', () => {
-        clearWrapper();
-        createGrid();
-        addListenersToCells();
         initializeGrid();
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell) => {
+            if (cell.classList.contains('alive')) {
+                cell.classList.remove('alive');
+                cell.classList.add('dead');
+            }
+        })
         isStarted = false;
         clearInterval(playbackTimeout);
         changeButtonIfActive();
@@ -145,32 +148,85 @@ function clearWrapper() {
     wrapper.innerHTML = '';
 }
 
-function increaseGridSize() {
+function increaseGridSizeByButton() {
     const button = document.querySelector('#increase');
     const field = document.querySelector('#field');
     button.addEventListener('click', () => {
         if (gridSize >= 50) return;
-        gridSize++;
+
+        increaseGridSize(1);
+
         disableSizeButtons();
         field.value = gridSize;
-        clearWrapper();
-        createGrid();
-        addListenersToCells();
     })
 }
 
-function decreaseGridSize() {
+function increaseGridSize(sizeToAdd) {
+    isStarted = false;
+    clearInterval(playbackTimeout);
+    changeButtonIfActive();
+    for (let i = 0; i < sizeToAdd; i++) {
+        const wrapper = document.querySelector('.wrapper');
+        const existingRows = wrapper.querySelectorAll('.row');
+
+        existingRows.forEach((existingRow, rowIndex) => {
+            grid[rowIndex].push(false);
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.classList.add('dead');
+            cell.id = rowIndex + ' - ' + gridSize
+            addListenerToOneCell(cell);
+            existingRow.appendChild(cell);
+        })
+
+        const newRow = document.createElement('div');
+        newRow.classList.add('row');
+        const newArrayRow = [];
+        for (let i = 0; i <= gridSize; i++) {
+            newArrayRow.push(false);
+            const cell = document.createElement('div');
+            cell.id = gridSize + ' - ' + i;
+            cell.classList.add('cell');
+            cell.classList.add('dead');
+            addListenerToOneCell(cell);
+            newRow.appendChild(cell);
+        }
+        wrapper.appendChild(newRow);
+        grid.push(newArrayRow);
+        gridSize++;
+    }
+}
+
+function decreaseGridSizeByButton() {
     const button = document.querySelector('#decrease');
     const field = document.querySelector('#field');
     button.addEventListener('click', () => {
         if (gridSize <= 2) return;
-        gridSize--;
+
+        decreaseGridSize(1);
+
         disableSizeButtons();
         field.value = gridSize;
-        clearWrapper();
-        createGrid();
-        addListenersToCells();
     })
+}
+
+function decreaseGridSize(sizeToRemove) {
+    isStarted = false;
+    clearInterval(playbackTimeout);
+    changeButtonIfActive();
+    for (let i = 0; i < sizeToRemove; i++) {
+        const rows = document.querySelectorAll('.row');
+        const rowToRemove = rows[rows.length - 1];
+        rowToRemove.remove();
+        grid.pop();
+        rows.forEach((row) => {
+            row.removeChild(row.lastElementChild);
+        })
+        for (let i = 0; i < gridSize - 1; i++) {
+            grid[i].pop();
+        }
+        gridSize--;
+    }
 }
 
 function disableSizeButtons() {
@@ -208,10 +264,16 @@ function changeSizeWithField() {
         if (!validateGridSize()) {
             return;
         }
-        gridSize = field.value;
-        clearWrapper();
-        createGrid();
-        addListenersToCells();
+
+        if (field.value > gridSize) {
+            const sizeToIncrease = field.value - gridSize;
+            increaseGridSize(sizeToIncrease);
+        }
+
+        else if (field.value < gridSize) {
+            const sizeToRemove = gridSize - field.value;
+            decreaseGridSize(sizeToRemove);
+        }
     })
 }
 
@@ -220,7 +282,7 @@ function randomizeGrid() {
     button.addEventListener('click', () => {
         clearWrapper();
         createGrid(0.35);
-        addListenersToCells();
+        addListenersToAllCells();
     })
 }
 
@@ -264,28 +326,28 @@ function createGrid(randomizeCoef, skipInitialization) {
     }
 }
 
-function addListenersToCells() {
-    const cellsElements = document.getElementsByClassName('cell');
-    const cells = Array.from(cellsElements);
-
+function addListenersToAllCells() {
+    const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => {
-        cell.addEventListener('click', () => {
-            let rowId = cell.id.split(' - ')[0];
-            let colId = cell.id.split(' - ')[1];
-            if (cell.classList.value.includes('dead')) {
-                grid[rowId][colId] = true;
-                cell.classList.remove('dead');
-                cell.classList.add('alive');
-            }
-            else if (cell.classList.value.includes('alive')) {
-                grid[rowId][colId] = false;
-                cell.classList.remove('alive');
-                cell.classList.add('dead');
-            }
-        })
+        addListenerToOneCell(cell);
     })
 }
 
+function addListenerToOneCell(cell) {
+    cell.addEventListener('click', () => {
+        let rowId = cell.id.split(' - ')[0];
+        let colId = cell.id.split(' - ')[1];
+        if (cell.classList.value.includes('dead')) {
+            grid[rowId][colId] = true;
+            cell.classList.remove('dead');
+            cell.classList.add('alive');
+        } else if (cell.classList.value.includes('alive')) {
+            grid[rowId][colId] = false;
+            cell.classList.remove('alive');
+            cell.classList.add('dead');
+        }
+    })
+}
 
 
 
