@@ -1,3 +1,16 @@
+// instead of recreating actual grid(not 2d array implementation)
+// you can loop through each cell(html element) and check with array of next iteration(copy) to
+// paint cells accordingly
+// it will increace perfomance, as you not recreating html element on each iteration
+
+// also you can rework logic of randomization, increasing\decreasing grid size to not recreate actual grid each time
+
+
+
+// ability to interactivly set custom colors selector for dead\alive cells
+// copy and paste btns: copy btn allows you to copy grid(2d array on current iteration)
+// past btn allows you to past 2d array
+
 
 
 let gridSize = 10;
@@ -54,7 +67,6 @@ function iterateGridAndCheckConditionForCells(){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    insertGridSize()
     createGrid();
     addListenersToCells();
     increaseGridSize();
@@ -63,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     randomizeGrid();
     listenStartButton();
     listenStopButton();
+    changeSizeWithField();
 })
 
 function listenStartButton() {
@@ -116,6 +129,9 @@ function resetCells() {
         createGrid();
         addListenersToCells();
         initializeGrid();
+        isStarted = false;
+        clearInterval(playbackTimeout);
+        changeButtonIfActive();
     })
 }
 
@@ -126,29 +142,72 @@ function clearWrapper() {
 
 function increaseGridSize() {
     const button = document.querySelector('#increase');
+    const field = document.querySelector('#field');
     button.addEventListener('click', () => {
+        if (gridSize >= 50) return;
         gridSize++;
+        disableSizeButtons();
+        field.value = gridSize;
         clearWrapper();
         createGrid();
         addListenersToCells();
-        insertGridSize()
     })
 }
 
 function decreaseGridSize() {
     const button = document.querySelector('#decrease');
+    const field = document.querySelector('#field');
     button.addEventListener('click', () => {
+        if (gridSize <= 2) return;
         gridSize--;
+        disableSizeButtons();
+        field.value = gridSize;
         clearWrapper();
         createGrid();
         addListenersToCells();
-        insertGridSize()
     })
 }
 
-function insertGridSize() {
-    const sizeCounter = document.querySelector('.sizeCounter');
-    sizeCounter.textContent = 'Grid size: ' + gridSize;
+function disableSizeButtons() {
+    const increaseBtn = document.querySelector('#increase');
+    const decreaseBtn = document.querySelector('#decrease');
+    if (gridSize < 3) {
+        decreaseBtn.disabled = true;
+    }
+    else
+        decreaseBtn.disabled = false;
+    if (gridSize > 50) {
+        increaseBtn.disabled = true;
+    }
+    else {
+        increaseBtn.disabled = false;
+    }
+}
+
+function validateGridSize() {
+    const field = document.querySelector('#field');
+    const fieldValue = Number(field.value);
+
+    if (fieldValue < 2 || fieldValue > 50 || !Number.isInteger(fieldValue)) {
+        alert('Incorrect grid size!');
+        field.value = gridSize;
+        return false;
+    }
+    return true;
+}
+
+function changeSizeWithField() {
+    const field = document.querySelector('#field');
+    field.value = gridSize;
+    field.addEventListener('change', () => {
+        if (!validateGridSize()) {
+            return;
+        }
+        gridSize = field.value;
+        clearWrapper();
+        createGrid();
+        addListenersToCells();
+    })
 }
 
 function randomizeGrid() {
