@@ -1,12 +1,7 @@
-
-// also you can rework logic of randomization, increasing\decreasing grid size to not recreate actual grid each time
-
-// ability to interactivly set custom colors selector for dead\alive cells
+// ability to interactively set custom colors selector for dead\alive cells
 // copy and paste btns: copy btn allows you to copy grid(2d array on current iteration)
 // past btn allows you to past 2d array
 
-
-// 1) take 2d array. 2)pop from grid. iterate through array  and pop(remove last item) from each row. and.\
 
 let gridSize = 10;
 let grid = [];
@@ -143,11 +138,6 @@ function resetCells() {
     })
 }
 
-function clearWrapper() {
-    const wrapper = document.querySelector('.wrapper');
-    wrapper.innerHTML = '';
-}
-
 function increaseGridSizeByButton() {
     const button = document.querySelector('#increase');
     const field = document.querySelector('#field');
@@ -162,13 +152,14 @@ function increaseGridSizeByButton() {
 }
 
 function increaseGridSize(sizeToAdd) {
-    isStarted = false;
-    clearInterval(playbackTimeout);
-    changeButtonIfActive();
     for (let i = 0; i < sizeToAdd; i++) {
         const wrapper = document.querySelector('.wrapper');
         const existingRows = wrapper.querySelectorAll('.row');
-
+        if (isStarted) {
+            clearInterval(playbackTimeout);
+            isStarted = false;
+            changeButtonIfActive();
+        }
         existingRows.forEach((existingRow, rowIndex) => {
             grid[rowIndex].push(false);
             const cell = document.createElement('div');
@@ -211,9 +202,11 @@ function decreaseGridSizeByButton() {
 }
 
 function decreaseGridSize(sizeToRemove) {
-    isStarted = false;
-    clearInterval(playbackTimeout);
-    changeButtonIfActive();
+    if (isStarted) {
+        clearInterval(playbackTimeout);
+        isStarted = false;
+        changeButtonIfActive();
+    }
     for (let i = 0; i < sizeToRemove; i++) {
         const rows = document.querySelectorAll('.row');
         const rowToRemove = rows[rows.length - 1];
@@ -280,32 +273,35 @@ function changeSizeWithField() {
 function randomizeGrid() {
     const button = document.querySelector('#random');
     button.addEventListener('click', () => {
-        clearWrapper();
-        createGrid(0.35);
-        addListenersToAllCells();
+        for (let row = 0; row < gridSize; row++) {
+            for (let col = 0; col < gridSize; col++ ) {
+                const cell = document.getElementById(row + ' - ' + col);
+                if (Math.random() < 0.35) {
+                    grid[row][col] = true;
+                    cell.classList.add('alive');
+                    cell.classList.remove('dead');
+                }
+                else {
+                    grid[row][col] = false;
+                    cell.classList.add('dead');
+                    cell.classList.remove('alive');
+                }
+            }
+        }
     })
 }
 
-function initializeGrid(randomizeCoef) {
+function initializeGrid() {
     grid = [];
     for (let i = 0; i < gridSize; i++) {
         let row = [];
         for (let j = 0; j < gridSize; j++) {
-            if (randomizeCoef && randomizeCoef > Math.random()) {
-                row.push(true);
-            }
-            else {
                 row.push(false);
-            }
         }
         grid.push(row);
     }
 }
-function createGrid(randomizeCoef, skipInitialization) {
-    if(!skipInitialization){
-        initializeGrid(randomizeCoef)
-    }
-
+function createGrid() {
     const wrapper = document.querySelector('.wrapper');
     for (let i = 0; i < gridSize; i++) {
         const newRow = document.createElement('div')
