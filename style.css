@@ -7,12 +7,17 @@
     height: 30px;
 }
 
+:root {
+    --aliveColor: #FF748B;
+    --deadColor: #EDE8DC;
+}
+
 .dead {
-    background-color: #EDE8DC;
+    background-color: var(--deadColor);
 }
 
 .alive {
-    background-color: #FF748B;
+    background-color: var(--aliveColor);
 }
 .montserrat {
     font-family: "Montserrat", sans-serif;
@@ -42,6 +47,11 @@ h1 {
     text-align: center;
     color: #EDE8DC;
     padding: 10px;
+}
+.main-container {
+    background-color: #C1CfA1;
+    padding: 20px;
+
 }
 
 .wrapper {
@@ -113,4 +123,38 @@ h1 {
 
 .active-icon {
     color: #FF748B;
+}
+
+.color-choosing {
+    display: flex;
+    color: #768566;
+    font-weight: 500;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+
+.color-change {
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #8c9c77;
+    border-radius: 5px;
+    padding-bottom: 10px;
+}
+
+#color-button {
+    font-size: 20px;
+    display: flex;
+    width: fit-content;
+}
+
+input {
+    background-color: #EDE8DC;
+    border: 1px solid #8c9c77;
+    border-radius: 5px;
+    padding: 2px;
+    text-align: center;
 }

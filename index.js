@@ -1,4 +1,4 @@
-// ability to interactively set custom colors selector for dead\alive cells
+
 // copy and paste btns: copy btn allows you to copy grid(2d array on current iteration)
 // past btn allows you to past 2d array
 
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     listenStartButton();
     listenStopButton();
     changeSizeWithField();
+    changeColorOfCells();
 })
 
 function checkAliveConditionForCell(row, col, grid){
@@ -70,6 +71,7 @@ function iterateGridAndCheckConditionForCells(){
 function listenStartButton() {
     let button = document.querySelector('#start');
     button.addEventListener('click', () => {
+        console.log('efqwe');
         clearInterval(playbackTimeout);
         isStarted = true;
         changeButtonIfActive();
@@ -302,6 +304,7 @@ function initializeGrid() {
     }
 }
 function createGrid() {
+    initializeGrid();
     const wrapper = document.querySelector('.wrapper');
     for (let i = 0; i < gridSize; i++) {
         const newRow = document.createElement('div')
@@ -343,6 +346,20 @@ function addListenerToOneCell(cell) {
             cell.classList.add('dead');
         }
     })
+}
+
+function changeColorOfCells () {
+    const button = document.querySelector('#color-button');
+    const newAliveField = document.querySelector('#color-alive');
+    const newDeadField = document.querySelector('#color-dead');
+    button.addEventListener('click', () => {
+
+        const newAliveColor = newAliveField.value;
+        const newDeadColor = newDeadField.value;
+        document.documentElement.style.setProperty('--aliveColor', newAliveColor);
+        document.documentElement.style.setProperty('--deadColor', newDeadColor);
+    })
+
 }
 
 

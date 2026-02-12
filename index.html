@@ -13,7 +13,23 @@
 <header>
     <h1>Mariia's Game of Life</h1>
 </header>
-<div style="background-color: #C1CfA1; padding: 20px "><div class="wrapper"></div></div>
+<div class="main-container">
+    <div class="wrapper"></div>
+    <div class="color-change">
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+            <div class="color-choosing">
+                <label for="color-alive">Color for alive cells:</label>
+                <input type="color" id="color-alive" value="#FF748B">
+            </div>
+            <div class="color-choosing">
+                <label for="color-dead">Color for dead cells:</label>
+                <input type="color" id="color-dead" value="#EDE8DC">
+            </div>
+        </div>
+
+        <button class="playButton" id="color-button">Apply</button>
+    </div>
+</div>
 
 <div class="actions">
     <div class="sizeActions">
