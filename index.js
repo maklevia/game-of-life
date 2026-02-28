@@ -373,9 +373,11 @@ function pasteGridListener() {
 
 async function pasteGrid() {
     try {
-        clearInterval(playbackTimeout);
-        isStarted = false;
-        changeButtonIfActive();
+        if (isStarted) {
+            clearInterval(playbackTimeout);
+            isStarted = false;
+            changeButtonIfActive();
+        }
 
         const gridStringToPaste = await navigator.clipboard.readText();
         const gridToPaste = JSON.parse(gridStringToPaste);
