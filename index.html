@@ -15,19 +15,24 @@
 </header>
 <div class="main-container">
     <div class="wrapper"></div>
-    <div class="color-change">
-        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
-            <div class="color-choosing">
-                <label for="color-alive">Color for alive cells:</label>
-                <input type="color" id="color-alive" value="#FF748B">
+    <div class="under-wrapper">
+        <div class="color-change">
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                <div class="color-choosing">
+                    <label for="color-alive">Color for alive cells:</label>
+                    <input type="color" id="color-alive" value="#FF748B">
+                </div>
+                <div class="color-choosing">
+                    <label for="color-dead">Color for dead cells:</label>
+                    <input type="color" id="color-dead" value="#EDE8DC">
+                </div>
             </div>
-            <div class="color-choosing">
-                <label for="color-dead">Color for dead cells:</label>
-                <input type="color" id="color-dead" value="#EDE8DC">
-            </div>
+            <button class="playButton" id="color-button">Apply</button>
         </div>
-
-        <button class="playButton" id="color-button">Apply</button>
+        <div class="copy-paste-actions">
+            <button class="playButton" id="copy">Copy Grid</button>
+            <button class="playButton" id="paste">Paste Grid</button>
+        </div>
     </div>
 </div>
 

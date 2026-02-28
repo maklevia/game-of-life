@@ -51,7 +51,6 @@ h1 {
 .main-container {
     background-color: #C1CfA1;
     padding: 20px;
-
 }
 
 .wrapper {
@@ -157,4 +156,18 @@ input {
     border-radius: 5px;
     padding: 2px;
     text-align: center;
+}
+.under-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.copy-paste-actions {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #8c9c77;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    justify-content: space-around;
 }

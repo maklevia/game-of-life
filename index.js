@@ -1,8 +1,3 @@
-
-// copy and paste btns: copy btn allows you to copy grid(2d array on current iteration)
-// past btn allows you to past 2d array
-
-
 let gridSize = 10;
 let grid = [];
 let playbackTimeout = null;
@@ -19,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     listenStopButton();
     changeSizeWithField();
     changeColorOfCells();
+    copyGrid();
+    pasteGridListener();
 })
 
 function checkAliveConditionForCell(row, col, grid){
@@ -71,7 +68,6 @@ function iterateGridAndCheckConditionForCells(){
 function listenStartButton() {
     let button = document.querySelector('#start');
     button.addEventListener('click', () => {
-        console.log('efqwe');
         clearInterval(playbackTimeout);
         isStarted = true;
         changeButtonIfActive();
@@ -90,7 +86,6 @@ function listenStartButton() {
                     cell.classList.add('alive');
                 }
             })
-            console.log(grid);
         }, 300)
     })
 }
@@ -353,7 +348,6 @@ function changeColorOfCells () {
     const newAliveField = document.querySelector('#color-alive');
     const newDeadField = document.querySelector('#color-dead');
     button.addEventListener('click', () => {
-
         const newAliveColor = newAliveField.value;
         const newDeadColor = newDeadField.value;
         document.documentElement.style.setProperty('--aliveColor', newAliveColor);
@@ -362,7 +356,61 @@ function changeColorOfCells () {
 
 }
 
+function copyGrid() {
+    const copyButton = document.querySelector('#copy');
+    copyButton.addEventListener('click', () => {
+        const gridCopyString = JSON.stringify(grid);
+        navigator.clipboard.writeText(gridCopyString)
+            .then(() => alert("Grid copied to clipboard!"))
+            .catch(err => console.error("Could not copy:", err));
+    })
+}
 
+function pasteGridListener() {
+    const pasteButton = document.querySelector('#paste');
+    pasteButton.addEventListener('click', pasteGrid);
+}
+
+async function pasteGrid() {
+    try {
+        clearInterval(playbackTimeout);
+        isStarted = false;
+        changeButtonIfActive();
+
+        const gridStringToPaste = await navigator.clipboard.readText();
+        const gridToPaste = JSON.parse(gridStringToPaste);
+        const gridToPasteSize = gridToPaste.length;
+        if (gridToPasteSize > gridSize) {
+            const sizeToAdd = gridToPasteSize - gridSize;
+            increaseGridSize(sizeToAdd);
+        }
+        else if (gridToPasteSize < gridSize) {
+            const sizeToRemove = gridSize - gridToPasteSize;
+            decreaseGridSize(sizeToRemove);
+        }
+        disableSizeButtons()
+        const field = document.querySelector('#field');
+        field.value = gridSize;
+        grid = gridToPaste;
+        for (let row = 0; row < gridSize; row++) {
+            for (let col = 0; col < gridSize; col++) {
+                const cell = document.getElementById(row + ' - ' + col);
+                if (grid[row][col]) {
+                    cell.classList.add('alive');
+                    cell.classList.remove('dead');
+                }
+                else {
+                    cell.classList.add('dead');
+                    cell.classList.remove('alive');
+                }
+            }
+        }
+    }
+    catch (err) {
+        console.error("Failed to paste:", err);
+        alert("Clipboard does not contain a valid grid pattern.");
+    }
+}
 
 
 
